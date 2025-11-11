@@ -3,8 +3,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Getting Started
 
 
-[![Screenshot](screenshot/img1.png)]
-[![Screenshot](screenshot/img2.png)]
+![Screenshot](screenshot/img1.png)
+![Screenshot](screenshot/img2.png)
 
 
 
