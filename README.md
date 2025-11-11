@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 
 ![Screenshot](screenshot/img1.png)
-![Screenshot](screenshot/img2.png)
+![Screenshot](screenshot/img3.png)
 
 
 
