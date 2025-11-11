@@ -8,7 +8,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 
 
-First, run the development server:
+First, 
+create database lapor
+Migrate npx prisma migrate dev
+config recaptcha
+
+
+run the development server:
 ```
 npx prisma migrate dev
 ```
