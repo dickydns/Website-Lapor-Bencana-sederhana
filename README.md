@@ -9,8 +9,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 
 First, 
+
 create database lapor
+
 Migrate npx prisma migrate dev
+
 config recaptcha
 
 
