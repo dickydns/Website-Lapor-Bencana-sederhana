@@ -291,7 +291,7 @@ export default function Home() {
                     onChange={(e) => setDescription(e.target.value)}
                     value={description}
                     required
-                >{description}</textarea>
+                ></textarea>
                 </div>
                 <ReCAPTCHA
                     ref={recaptchaRef}
@@ -368,12 +368,12 @@ export default function Home() {
         <footer className="container">
             <div className="text-center">
             <p className="mb-0">
-                &copy; 2024 Sistem Laporan Warga. Dibuat untuk melayani masyarakat
+                &copy; 2025 Sistem Laporan Warga. Dibuat untuk melayani masyarakat
                 dengan lebih baik.
             </p>
             <p className="mb-0 mt-2">
-                <i className="fas fa-phone"></i> (021) 1234-5678 |
-                <i className="fas fa-envelope"></i> info@laporanwarga.id
+        
+                <i className="fas fa-envelope"></i> info@laporanwarga.
             </p>
             </div>
         </footer>
