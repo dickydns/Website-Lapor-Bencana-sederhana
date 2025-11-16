@@ -4,8 +4,7 @@ import { useCategory } from "@/hooks/category/useCategory";
 import { useMemo, useRef, useState } from "react";
 
 
-
-import ReCAPTCHA from "react-google-recaptcha"
+// import ReCAPTCHA from "react-google-recaptcha"
 
 type ReportItem = {
   id: number;
@@ -19,7 +18,7 @@ type ReportItem = {
 };
 
 export default function Home() {
-    const recaptchaRef = useRef<ReCAPTCHA | null>(null)
+    // const recaptchaRef = useRef<ReCAPTCHA | null>(null)
     const [submitting, setSubmitting] = useState(false)
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
     const createReport = useCreateReport()
@@ -58,16 +57,16 @@ export default function Home() {
     const handleSentReport = async(e: React.FormEvent) =>{
         e.preventDefault();
         let token;
-        try {
-            token = await recaptchaRef.current?.executeAsync()
-        } catch (err) {
-            token = undefined
-        }
+        // try {
+        //     token = await recaptchaRef.current?.executeAsync()
+        // } catch (err) {
+        //     token = undefined
+        // }
 
-        if (!token) {
-            alert('Captcha gagal, coba lagi.')
-            return
-        }
+        // if (!token) {
+        //     alert('Captcha gagal, coba lagi.')
+        //     return
+        // }
         const payload ={
             category_id:category_id,
             title:title,
@@ -76,7 +75,6 @@ export default function Home() {
             report_email:report_email,
             report_name:report_name,
             report_phone:report_phone,
-            token:token 
         }
         createReport.mutate(payload, {
         onSuccess: () => {
@@ -139,7 +137,7 @@ export default function Home() {
             <div className="row align-items-center">
                 <div className="col-lg-8">
                 <h1>
-                    <i className="fas fa-megaphone"></i> Selamat Datang di Sistem
+                    <i className="fas fa-megaphone"></i>Selamat Datang di Sistem
                     Laporan Warga
                 </h1>
                 <p>
@@ -293,11 +291,11 @@ export default function Home() {
                     required
                 ></textarea>
                 </div>
-                <ReCAPTCHA
+                {/* <ReCAPTCHA
                     ref={recaptchaRef}
                     sitekey={siteKey}
                     size="invisible"
-                />
+                /> */}
                 { status !== "" ? (
                 <div className="alert alert-primary" role="alert">
                     {status}
