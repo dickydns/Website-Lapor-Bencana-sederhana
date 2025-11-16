@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "prisma db seed",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
@@ -27,12 +28,14 @@
     "react-google-recaptcha": "^3.1.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20.19.24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-google-recaptcha": "^2.1.9",
+    "cypress": "^15.6.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "tailwindcss": "^4",
