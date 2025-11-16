@@ -39,6 +39,7 @@ export function useCreateCategory(){
                 },
                 body:JSON.stringify(data)
             });
+          
             if(!res.ok){
                 throw new Error('Gagal membuat kategori');
             }

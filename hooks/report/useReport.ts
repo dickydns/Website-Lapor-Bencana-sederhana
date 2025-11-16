@@ -14,7 +14,7 @@ interface createReport {
     report_email?:string;
     report_name?:string;
     report_phone?:string;
-    token: string;
+    token?: string;
 
 }
 

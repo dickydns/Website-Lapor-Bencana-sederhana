@@ -37,6 +37,7 @@ export async function POST(request: Request){
 }
 
 
+
 export async function PUT(request: Request){
     try{ 
         const {title, type, id} = await request.json();
