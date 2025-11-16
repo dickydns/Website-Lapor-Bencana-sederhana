@@ -59,3 +59,4 @@ model Report {
   @@index([category_id])
   
 }
+
