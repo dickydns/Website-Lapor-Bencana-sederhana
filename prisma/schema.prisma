@@ -54,4 +54,8 @@ model Report {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @default(now()) @updatedAt
 
+
+
+  @@index([category_id])
+  
 }
