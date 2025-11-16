@@ -12,18 +12,20 @@ interface createCategory {
 }
 
 export function useCategory(){
+   
     return useQuery({
         queryKey: ['category'],
         queryFn: async ()=>{
-            const res = await fetch('/api/admin/category');
-            if(!res){
-                throw new Error('Gagal mengambil data kategori');
+            const res = await fetch('/api/admin/category_v2');
+            if(!res.ok){ 
+                throw new Error(`Error ${res.status}: Gagal mengambil data kategori`);
             }
             const json = await res.json();
             return json.data ?? [];
         },
         refetchOnWindowFocus: false,
         staleTime: 1000 * 60, 
+        retry: 1, 
     })
 }
 
@@ -32,7 +34,7 @@ export function useCreateCategory(){
     const cl = useQueryClient();
     return useMutation({
         mutationFn: async (data:createCategory)=>{
-            const res = await fetch('/api/admin/category', {
+            const res = await fetch('/api/admin/category_v2', {
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -56,7 +58,7 @@ export function useUpdateCategory(){
     const cl = useQueryClient();
     return useMutation({
         mutationFn: async (data:updateCategory)=>{
-            const res = await fetch('/api/admin/category', {
+            const res = await fetch('/api/admin/category_v2', {
                 method:'PUT',
                 headers:{
                     'Content-Type':'application/json'

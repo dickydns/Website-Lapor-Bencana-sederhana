@@ -1,7 +1,7 @@
 "use client";
 import Sidebar from "../component/sidebar";
 import Header from "../component/header";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSessionCheckAdministrator } from "@/lib/check_auth";
 import { useRouter } from "next/navigation";
 import { useCategory, useCreateCategory, useUpdateCategory } from "@/hooks/category/useCategory";
@@ -12,6 +12,8 @@ export default function Category() {
   const createCategoryMutation = useCreateCategory();
   const UpdateDelCategory      = useUpdateCategory();
   const { data, isLoading, error } = useCategory();
+  console.log("error"+data)
+  
   const category = data || [];
   const [title, setTitle] = useState("");
   const [id, setId]       = useState(0);
