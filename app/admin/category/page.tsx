@@ -91,6 +91,15 @@ export default function Category() {
         if (modalElement) {
           const bsModal = (window as any).bootstrap?.Modal?.getOrCreateInstance(modalElement);
           bsModal?.hide();
+          
+          // Hapus backdrop
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove();
+          }
+          
+          // Hapus modal-open class dari body
+          document.body.classList.remove('modal-open');
         }
         // Reset form
         setTitle("");
@@ -148,11 +157,20 @@ export default function Category() {
             <div className="row">
               <div className="col-lg-12 d-flex align-items-stretch">
                 <div className="card w-100">
+                  
                   <div className="card-body p-4">
-                    <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info float-right">Tambah Kategori Pengaduan</a>
-                    <h5 className="card-title fw-semibold mb-4">
-                      Kategori
-                    </h5>
+                    <div className="row">
+                      <div className="col-lg-4">
+                          <h5 className="card-title fw-semibold mb-4">
+                          Kategori
+                          </h5>
+                      </div>
+                      <div className="col-lg-8">
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info float-right">Tambah Kategori Pengaduan</a>
+                      </div>
+                    </div>
+
+              
                    
                     <div className="table-responsive">
                       <table className="table text-nowrap mb-0 align-middle">
