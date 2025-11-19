@@ -9,7 +9,7 @@ import { useReport, handleUpdateDelReport } from "@/hooks/report/useReport";
 export default function Report() {
   const router = useRouter();
   // const createCategoryMutation = useCreateCategory();
-  const updateDelReport      = handleUpdateDelReport();
+  const updateDelReport = handleUpdateDelReport();
 
   const { data, isLoading, error } = useReport();
   const report = data || [];
@@ -19,6 +19,25 @@ export default function Report() {
   const [created_at, setCreatedAt] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [id, setId] = useState(0);
+
+  // --- LOAD MORE state ---
+  // visibleCount controls how many items are shown in the table.
+  // You can change PER_PAGE to show more/less by default.
+  const PER_PAGE = 3;
+  const [visibleCount, setVisibleCount] = useState(PER_PAGE);
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => Math.min(prev + PER_PAGE, report.length));
+  };
+
+  const handleShowAll = () => {
+    setVisibleCount(report.length);
+  };
+
+  const handleResetVisible = () => {
+    setVisibleCount(PER_PAGE);
+  };
+  // --- end load more state ---
 
   const handleUpdatePopup = (id: number, status: string) => {
     const modalElement = document.getElementById("exampleModal");
@@ -55,26 +74,29 @@ export default function Report() {
   };
 
   const handleDelete = (id: number) => {
-      if (confirm('Apakah anda yakin ingin menghapus kategori ini?')) {
-        const payload = {
-          type: "delete",
-          id:id
-        };
-        updateDelReport.mutate(payload, {
-          onSuccess: () => {
-            // Close modal
-              const modalElement = document.getElementById('exampleModal');
-              if (modalElement) {
-                const bsModal = (window as any).bootstrap?.Modal?.getOrCreateInstance(modalElement);
-                bsModal?.hide();
-              }
-            // Reset form
-            setTitle("");
-          }, onError: (error:any) => {
-            alert("Gagal membuat kategori: " + error.message);
+    if (confirm("Apakah anda yakin ingin menghapus kategori ini?")) {
+      const payload = {
+        type: "delete",
+        id: id,
+      };
+      updateDelReport.mutate(payload, {
+        onSuccess: () => {
+          // Close modal
+          const modalElement = document.getElementById("exampleModal");
+          if (modalElement) {
+            const bsModal = (window as any).bootstrap?.Modal?.getOrCreateInstance(modalElement);
+            bsModal?.hide();
           }
-        })
-      }
+          // Reset form
+          setTitle("");
+          // If item removed from report list on the server, make sure visibleCount doesn't exceed new length
+          setVisibleCount((prev) => Math.min(prev, Math.max(0, report.length - 1)));
+        },
+        onError: (error: any) => {
+          alert("Gagal membuat kategori: " + error.message);
+        },
+      });
+    }
   };
 
   const handleUpdateStatus = async (e: React.FormEvent) => {
@@ -96,7 +118,7 @@ export default function Report() {
         }
         // Reset form
         setId(0);
-        setStatusReport("")
+        setStatusReport("");
       },
       onError: (error: any) => {
         alert("Gagal membuat kategori: " + error.message);
@@ -119,6 +141,15 @@ export default function Report() {
   useEffect(() => {
     getSessionCheckAdministrator(router);
   }, []);
+
+  // when `report` changes (new data arrives), make sure visibleCount is valid
+  useEffect(() => {
+    if (report.length > 0) {
+      setVisibleCount((prev) => Math.min(Math.max(prev, PER_PAGE), report.length));
+    } else {
+      setVisibleCount(PER_PAGE);
+    }
+  }, [report.length]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -154,9 +185,7 @@ export default function Report() {
               <div className="col-lg-12 d-flex align-items-stretch">
                 <div className="card w-100">
                   <div className="card-body p-4">
-                    <h5 className="card-title fw-semibold mb-4">
-                      Laporan Masuk
-                    </h5>
+                    <h5 className="card-title fw-semibold mb-4">Laporan Masuk</h5>
                     <div className="table-responsive">
                       <table className="table text-nowrap mb-0 align-middle">
                         <thead className="text-dark fs-4">
@@ -176,48 +205,30 @@ export default function Report() {
                           </tr>
                         </thead>
                         <tbody>
-                          {report.map((item: any, index: number) => (
+                          {report.slice(0, visibleCount).map((item: any, index: number) => (
                             <tr key={item.id ?? index}>
                               <td className="border-bottom-0">
-                                <h6 className="fw-semibold mb-0">
-                                  {index + 1}
-                                </h6>
+                                <h6 className="fw-semibold mb-0">{index + 1}</h6>
                               </td>
                               <td className="border-bottom-0">
-                                <h6 className="fw-semibold mb-1">
-                                  {item.title}
-                                </h6>
+                                <h6 className="fw-semibold mb-1">{item.title}</h6>
                               </td>
                               <td className="border-bottom-0">
-                                <h6 className="fw-semibold mb-1 capitalize">
-                                  {item.status_report}
-                                </h6>
+                                <h6 className="fw-semibold mb-1 capitalize">{item.status_report}</h6>
                               </td>
 
                               <td className="border-bottom-0">
-                                <button
-                                  onClick={() => handleDetail(item.id)}
-                                  className="btn btn-primary me-2"
-                                >
+                                <button onClick={() => handleDetail(item.id)} className="btn btn-primary me-2">
                                   Detail
                                 </button>
                                 <button
-                                  onClick={() =>
-                                    handleUpdatePopup(
-                                      item.id,
-                                      item.status_report
-                                    )
-                                  }
+                                  onClick={() => handleUpdatePopup(item.id, item.status_report)}
                                   className="btn btn-primary me-2"
                                 >
                                   Ubah Status
                                 </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDelete(item.id)}
-                                  className="btn btn-danger"
-                                >
-                                  Hapus{" "}
+                                <button type="button" onClick={() => handleDelete(item.id)} className="btn btn-danger">
+                                  Hapus
                                 </button>
                               </td>
                             </tr>
@@ -225,6 +236,35 @@ export default function Report() {
                         </tbody>
                       </table>
                     </div>
+
+                    {/* Load more controls */}
+                    <div className="d-flex justify-content-between align-items-center mt-3">
+                      <div>
+                        <small>
+                          Menampilkan {Math.min(visibleCount, report.length)} dari {report.length} laporan
+                        </small>
+                      </div>
+
+                      <div>
+                        {report.length > visibleCount && (
+                          <>
+                            <button className="btn btn-outline-primary me-2" onClick={handleLoadMore}>
+                              Load more
+                            </button>
+                            <button className="btn btn-outline-secondary me-2" onClick={handleShowAll}>
+                              Show all
+                            </button>
+                          </>
+                        )}
+
+                        {report.length > PER_PAGE && visibleCount > PER_PAGE && (
+                          <button className="btn btn-light" onClick={handleResetVisible}>
+                            Show less
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -248,12 +288,7 @@ export default function Report() {
               <h5 className="modal-title" id="exampleModalLabel">
                 Keterangan
               </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form>
               <div className="modal-body">
@@ -276,8 +311,7 @@ export default function Report() {
                       <td>: {created_at}</td>
                     </tr>
                     <tr>
-                      <td className="fw-bold">
-                        Deskripsi
+                      <td className="fw-bold">Deskripsi
                         <br />
                       </td>
                     </tr>
@@ -286,11 +320,7 @@ export default function Report() {
                 <p>{deskripsi}</p>
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  data-bs-dismiss="modal"
-                  className="btn btn-secondary"
-                >
+                <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">
                   Close
                 </button>
               </div>
@@ -314,12 +344,7 @@ export default function Report() {
               <h5 className="modal-title" id="exampleModalLabel">
                 Ubah status pengerjaan
               </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={handleCloseModal}
-                aria-label="Close"
-              ></button>
+              <button type="button" className="btn-close" onClick={handleCloseModal} aria-label="Close"></button>
             </div>
             <form onSubmit={handleUpdateStatus}>
               <div className="modal-body">
@@ -327,12 +352,7 @@ export default function Report() {
                   <label htmlFor="judul">Ubah Status</label>
                   <br />
                   <br />
-                  <select
-                    id="status"
-                    className="form-control"
-                    value={statusReport}
-                    onChange={(e) => setStatusReport(e.target.value)}
-                  >
+                  <select id="status" className="form-control" value={statusReport} onChange={(e) => setStatusReport(e.target.value)}>
                     <option value="pending">Pending</option>
                     <option value="progress">Progress</option>
                     <option value="done">Done</option>
@@ -340,11 +360,7 @@ export default function Report() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
-                  className="btn btn-secondary"
-                >
+                <button type="button" onClick={handleCloseModal} className="btn btn-secondary">
                   Close
                 </button>
                 <button type="submit" className="btn btn-primary">
