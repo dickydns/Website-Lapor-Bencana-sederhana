@@ -1,7 +1,7 @@
 "use client";
 import { useDashboard, useCreateReport } from "@/hooks/report/useReport";
 import { useCategory } from "@/hooks/category/useCategory";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 
 
 // import ReCAPTCHA from "react-google-recaptcha"
@@ -23,10 +23,14 @@ export default function Home() {
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
     const createReport = useCreateReport()
 
+
     const { data, isLoading, error } = useDashboard();
     const { data: categoryData } = useCategory();
     const report: ReportItem[] = (data ?? []) as ReportItem[];
     const category = categoryData ?? [];
+
+
+    
 
     //Form var
     const [category_id, setCategoryId]   = useState(0);
@@ -54,19 +58,15 @@ export default function Home() {
         [report]
     );
 
+
+    const PAGE_SIZE = 2; 
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+
     const handleSentReport = async(e: React.FormEvent) =>{
         e.preventDefault();
         let token;
-        // try {
-        //     token = await recaptchaRef.current?.executeAsync()
-        // } catch (err) {
-        //     token = undefined
-        // }
-
-        // if (!token) {
-        //     alert('Captcha gagal, coba lagi.')
-        //     return
-        // }
+      
         const payload ={
             category_id:category_id,
             title:title,
@@ -93,6 +93,22 @@ export default function Home() {
         }
       })
     }
+
+    
+    useEffect(() => {
+        setVisibleCount(PAGE_SIZE);
+    }, [data]); 
+
+    const visibleItems = useMemo(() => {
+        return report.slice(0, visibleCount);
+    }, [report, visibleCount]);
+
+    const hasMore = visibleCount < report.length;
+
+    const handleLoadMore = () => {
+        if (!hasMore) return;
+        setVisibleCount((v) => Math.min(report.length, v + PAGE_SIZE));
+    };
     return (
         <>
         {/* Navbar */}
@@ -322,7 +338,7 @@ export default function Home() {
                     <i className="fas fa-history"></i> Riwayat Laporan Terbaru
                 </h2>
 
-                {report.map((item, index:number) => (
+                {visibleItems.map((item, index: number) => (
                 <div className="report-item" key={item.id}>
                     <div className="d-flex justify-content-between align-items-start">
                     <div>
@@ -357,6 +373,18 @@ export default function Home() {
                     </div>
                 </div>
                 ))}
+
+                {report.length > 0 && (
+                    <div style={{ marginTop: 12, display: "flex", justifyContent: "center" }}>
+                    <button
+                        onClick={handleLoadMore}
+                        disabled={!hasMore}
+                        className="btn btn-outline-primary"
+                    >
+                        {hasMore ? `Load more (${Math.min(PAGE_SIZE, report.length - visibleCount)} lagi)` : "Semua Laporan Dimuat"}
+                    </button>
+                    </div>
+                )}
 
             </div>
         </div>
