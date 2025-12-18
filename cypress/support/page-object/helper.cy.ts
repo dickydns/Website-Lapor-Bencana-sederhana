@@ -4,6 +4,11 @@ class newHelper {
     visitHomepage() {
       cy.visit('http://localhost:3000');
     }
+
+    visitLoginDashbard() {
+      cy.visit('http://localhost:3000/admin');
+    }
+
     firstName(){
       const firstName = faker.person.firstName();
   
@@ -34,6 +39,18 @@ class newHelper {
       const description = faker.lorem.paragraph({ min: 3, max: 7 })
 
       cy.get('#deskripsi').type(description);
+    }
+
+    fillEmail(){
+      cy.get('#exampleInputEmail1').type(Cypress.env('user_email'));
+    }
+
+    fillPassword(){
+      cy.get('#exampleInputPassword1').type(Cypress.env('user_password'));
+    }
+
+    fillWrongPassword(){
+      cy.get('#exampleInputPassword1').type(Cypress.env('wrong_password'));
     }
 }
   
